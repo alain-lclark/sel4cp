@@ -72,6 +72,19 @@ SUPPORTED_BOARDS = (
         examples = {
             "hello": Path("example/zcu102/hello")
         }
+    ),
+    BoardInfo(
+        name="odroidc2",
+        gcc_cpu="cortex-a53",
+        loader_link_address=0x20000000,
+        kernel_options = {
+            "KernelPlatform": "odroidc2",
+            "KernelIsMCS": True,
+            "KernelArmExportPCNTUser": True,
+        },
+        examples = {
+            "hello": Path("example/odroidc2/hello")
+        }
     )
 )
 

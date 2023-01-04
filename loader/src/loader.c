@@ -126,6 +126,18 @@ putc(uint8_t ch)
 {
     *((volatile uint32_t *)(0x00FF000030)) = ch;
 }
+#elif defined(BOARD_odroidc2)
+#define UART_BASE 0xC81004C0
+#define STAT 0xC
+#define TX 0x0
+#define STAT_TXFIFOFULL (1 << 21)
+
+static void
+putc(uint8_t ch)
+{
+    while (*UART_REG(STAT) & STAT_TXFIFOFULL) { }
+    *UART_REG(TX) = ch;
+}
 #else
 #error Board not defined
 #endif
