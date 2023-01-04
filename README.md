@@ -82,6 +82,44 @@ Testing has been performed using commit `92f0f3ab28f00c97851512216c855f4180534a6
 
     $ ./env/bin/python build_sdk.py --sel4=<path to sel4>
 
+## Building the SDK with the seL4 dockerfiles
+
+Let us assume that this repository is cloned in `$HOME`.
+
+    $ cd $HOME
+    $ git clone https://github.com/seL4/seL4-CAmkES-L4v-dockerfiles.git
+    $ pushd seL4-CAmkES-L4v-dockerfiles
+    $ git remote add malus-brandywine-fork https://github.com/malus-brandywine/seL4-CAmkES-L4v-dockerfiles
+    $ git fetch malus-brandywine-fork
+    $ git checkout malus-brandywine-fork/cp_branch
+    $ make user_cp HOST_DIR=$HOME
+
+The following command must be run only once to finalize the docker environment.
+
+    % /tmp/cp_prep.sh
+
+This last step does clone an alternative sel4cp repository in `sel4-core-platform/sel4cp` which we will ignore and which can be deleted.
+
+The following commands build the SDK.
+
+    % pushd sel4cp
+    % PATH=$PATH:/usr/local/musl/aarch64/bin:/usr/local/gcc-x86_64-aarch64-none-elf/bin ../sel4-core-platform/pyenv/bin/python build_sdk.py --sel4 ../sel4-core-platform/sel4_cp_support
+
+The same environment can be used to build the examples shipped with the core platform.
+
+### Building and running the Odroid-C2 example
+
+    % cd example/odroidc2/hello
+    % mkdir build
+    % PATH=$PATH:/usr/local/musl/aarch64/bin:/usr/local/gcc-x86_64-aarch64-none-elf/bin make BUILD_DIR=build SEL4CP_SDK=/host/sel4cp/release/sel4cp-sdk-1.2.6 SEL4CP_BOARD=odroidc2 SEL4CP_CONFIG=debug
+
+Copy the image `build/loader.img` to an SD card. Move the SD card to your Odroid-C2 single board computer. Boot the platform to the U-Boot prompt and type the following commands.
+
+    => fatload mmc 0 0x20000000 loader.img
+    => go 0x20000000
+
+On a successful run, the serial console output should include the phrase `hello, world`.
+
 ## Using the SDK
 
 After building the SDK you probably want to build a system!
@@ -149,6 +187,10 @@ The provided board support should be at the module level and does not make any a
 
 Note: There are different configured of the TQMa8Xx board which include different NXP SoCs and different memory configurations.
 Such modules are not supported.
+
+### Odroid-C2
+
+The Odroid-C2 single board computer features the Amlogic S905 system-on-chip and a Cortex-A53 core.
 
 ## Supported Configurations
 
